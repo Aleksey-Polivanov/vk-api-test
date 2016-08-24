@@ -1,0 +1,55 @@
+/*
+
+Template 2077 Modern Town
+
+http://www.tooplate.com/view/2077-modern-town
+
+*/
+
+/* Body 
+------------------------------------- */
+body {
+		background: #ffffff;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    position: relative;
+}
+
+html,body {
+      width: 100%;
+     overflow-x: hidden;
+  }
+
+.RegForm{
+    width: 500px;
+    height: 250px;
+    background-color: #d4ebfe;
+    margin: 200px 30%;
+    border-radius: 30px;
+}
+
+.form{
+    padding: 1px 0px 0px 0px;
+}
+
+p{
+  margin: 15px 0px 0px 30px;
+}
+
+h3 {
+  padding: 0px 0px 5px 0px;
+  text-align: center;
+}
+
+.tokenf{
+  width: 350px;
+}
+
+.token{
+  margin: 0px 0px 0px 30px;
+}
+
+.logIn{
+  margin: 10px 0px 0px 30px;
+  width: 100px;
+}
