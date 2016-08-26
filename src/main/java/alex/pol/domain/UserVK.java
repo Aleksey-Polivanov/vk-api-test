@@ -20,6 +20,16 @@ public class UserVK extends BaseModel {
 
     }
 
+    public UserVK(String vkID, String firstName, String secondName, Boolean sendMail) {
+        this.vkID = vkID;
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.sendMail = sendMail;
+    }
+
+    public UserVK() {
+    }
+
     public String getVkID() {
         return vkID;
     }

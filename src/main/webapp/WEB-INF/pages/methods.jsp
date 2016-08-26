@@ -16,6 +16,20 @@
 
 </form:form>
 
+<form:form role="form" action="/searchUsers" method="post">
+
+    <button type="submit" class="btn btn-warning">Search Users</button>
+
+    <input type="text" name="groupID" placeholder="Введите Group_ID">
+
+</form:form>
+
+<form:form role="form" action="/sendMessage" method="post">
+
+    <%--<input type="text" name="groupID" placeholder="Введите Group_ID">--%>
+    <button type="submit" class="btn btn-warning">Send message</button>
+
+</form:form>
 
 </body>
 </html>

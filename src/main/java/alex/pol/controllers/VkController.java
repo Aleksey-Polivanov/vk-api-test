@@ -50,35 +50,49 @@ public class VkController {
     public ModelAndView auth(@RequestParam(required = false) String AppID,
                              @RequestParam(required = false) String accessToken) throws IOException {
         //String AppID = "5599674";
-        vkApi = new VkApi(AppID,accessToken);
+        vkApi = new VkApi(AppID, accessToken);
         ModelAndView modelAndView = new ModelAndView("methods");
-            return modelAndView;
+        return modelAndView;
     }
-
 
     @RequestMapping(value = "/getMyFriends", method = RequestMethod.POST)
     public ModelAndView getMyFriend() throws IOException, SQLException {
 
-        System.out.println(vkApi.toString());
         String str = vkApi.getFriends();
 
         System.out.println(str);
 
         String regex = "\\{([id]+\\W\\d+),(first_name\\W[A-zА-я0-9]+),(last_name\\W[A-zА-я0-9]+),(nickname\\W[.[^,]]*),(online\\W\\d)\\}";
         Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(str.replace("\"",""));
+        Matcher m = p.matcher(str.replace("\"", ""));
 
-        while(m.find()) {
+        addNewUsers(m);
 
-            String vkID [] = m.group(1).split(":");
-            String firstName [] = m.group(2).split(":");
-            String lastName [] = m.group(3).split(":");
+        List<UserVK> usersVK = userVKService.getAll();
 
-            UserVK userVk = new UserVK(vkID[1],firstName[1],lastName[1]);
-            System.out.println(userVk.toString());
-            userVKService.insert(userVk);
-//
-        }
+        ModelAndView modelAndView = new ModelAndView("friends");
+        modelAndView.addObject("usersVK", usersVK);
+        return modelAndView;
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    @RequestMapping(value = "/searchUsers", method = RequestMethod.POST)
+    public ModelAndView searchUsers(@RequestParam(required = true) String groupID) throws IOException, SQLException {
+
+        String str = vkApi.searchUsers(groupID);
+
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        System.out.println(str.replace("\"", ""));
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+        String regex = "\\{([id]+\\W\\d+),(first_name\\W[A-zА-я0-9]+),(last_name\\W[A-zА-я0-9]+)\\}";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(str.replace("\"", ""));
+
+        addNewUsers(m);
+
         List<UserVK> usersVK = userVKService.getAll();
 
         ModelAndView modelAndView = new ModelAndView("friends");
@@ -87,6 +101,53 @@ public class VkController {
     }
 
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
+    public ModelAndView sendMessage() throws SQLException, IOException {
+
+        List<UserVK> usersVK = userVKService.getAll();
+
+        System.out.println(usersVK.toString());
+        for (UserVK userVK : usersVK) {
+            System.out.println(userVK.toString());
+            if(!(userVK.getSendMail())) {
+
+                vkApi.sendMessages(userVK.getVkID());
+                userVK.setSendMail(true);
+                System.out.println(userVK.getFirstName() + " " + userVK.getSecondName() + " сообщение отправленно");
+
+            }
+        }
+
+        ModelAndView modelAndView = new ModelAndView("methods");
+        return modelAndView;
+
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+    public void addNewUsers(Matcher m) throws SQLException {
+
+    while (m.find()) {
+
+        String vkID[] = m.group(1).split(":");
+        String firstName[] = m.group(2).split(":");
+        String lastName[] = m.group(3).split(":");
+
+        UserVK userVk = new UserVK(vkID[1], firstName[1], lastName[1]);
+        System.out.println(userVk.toString());
+        userVKService.insert(userVk);
+
+    }
+
+
+
+
+
+}
 
 
 }

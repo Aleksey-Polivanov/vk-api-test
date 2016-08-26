@@ -1,5 +1,7 @@
 package alex.pol.domain;
 
+import sun.net.www.protocol.http.HttpURLConnection;
+
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 public class VkApi {
@@ -41,7 +44,7 @@ public class VkApi {
         String reqUrl = AUTH_URL
                 .replace("{APP_ID}", appId)
                 .replace("{PERMISSIONS}", "messages")
-                .replace("{REDIRECT_URI}", "/methods")
+                .replace("{REDIRECT_URI}", "blank.html")
                 .replace("{DISPLAY}", "page")
                 .replace("{API_VERSION}", "5.21");
         try {
@@ -69,10 +72,64 @@ public class VkApi {
         return invokeApi("friends.get", Params.create()
 //                .add("count", String.valueOf(1))
                 .add("fields", nickname));
-//                .add("fields", domain)
-//                .add("fields", sex)
-//                .add("fields", city));
+//
     }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    public String searchUsers(String groupID) throws IOException {
+
+        if(groupID.equals("it_climb")){
+            groupID = "105592803";
+        }
+
+        if(groupID.equals("JavaRush")){
+            groupID = "43948962";
+        }
+
+        return invokeApi("users.search", Params.create()
+                .add("sort", String.valueOf(1))
+                .add("count", String.valueOf(1000))
+                .add("city", String.valueOf(280))
+                .add("country", String.valueOf(2))
+                .add("sex", String.valueOf(2))
+                .add("age_from", String.valueOf(22))
+                .add("age_to", String.valueOf(36))
+                .add("has_photo",String.valueOf(1))
+                .add("group_id", groupID));
+
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    public void sendMessages(String userID) throws IOException {
+
+        String msg =" Привет.\n" +
+                    "\n" +
+                    "Я хочу немного украсть твоего времени и рассказать о курсе \"Как пролезть в IT как Junior Java Developer\". Собирается группа для написания тестового проекта, чтоб получить навыки и заполучить заветную вакансию.\n" +
+                    "\n" +
+                    "Если интересно вот группа:\n" +
+                    "\n" +
+                    "https://vk.com/java_get_first_job.\n" +
+                    "\n" +
+                    "Есть вопросы:\n" +
+                    "skype: id-evg\n" +
+                    "тел: 050 95 48 337\n" +
+                    "\n" +
+                    "На это сообщение не отвечаем) noreply)";
+
+        String msg1 = "Шшшш шшш.. " + "\n" + "Ра..шшш..з! Раз!" + "\n" + "приём!! как меня видно?" + "\n" +
+                "Спите спокойно это просто Test API ;)"  + "\n" +  "Конец связи!!";
+
+        String msg2 = "One One!";
+
+            invokeApi("messages.send", Params.create()
+                .add("user_id", userID)
+                .add("message", msg2));
+    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
 
     private String invokeApi(String method, Params params) throws IOException {
         final String parameters = (params == null) ? "" : params.build();
@@ -84,9 +141,11 @@ public class VkApi {
         final URL url = new URL(reqUrl);
         try (InputStream is = url.openStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            reader.lines().forEach(result::append);
+          reader.lines().forEach(result::append);
         }
 
+
+        System.out.println(result.toString());
         return result.toString();
     }
 
