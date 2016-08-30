@@ -13,6 +13,10 @@ public class HomeController {
     public ModelAndView home() {
 
         ModelAndView modelAndView = new ModelAndView("home_page");
+//        if(access_token != null){
+//            System.out.println(access_token);
+//            modelAndView.addObject("token",access_token);
+//        }
         return modelAndView;
     }
 

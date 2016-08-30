@@ -1,4 +1,5 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -28,8 +29,15 @@
 
 <p>Для получения токена: <br>
     1. авторизируйтесь на сайте <a href="http://vk.com">vk.com</a><br>
-    2. нажмите на <a href="https://oauth.vk.com/authorize?client_id=5599674&scope=messages&redirect_uri=https://oauth.vk.com/blank.html&display=page&v=5.21&response_type=token">Get Token</a><br>
+    2. нажмите на <a href="https://oauth.vk.com/authorize?client_id=5599674&scope=offline,messages&redirect_uri=https://oauth.vk.com/blank.html&display=page&v=5.21&response_type=token">Get Token</a><br>
+    <%--2. нажмите на <a href="https://oauth.vk.com/authorize?client_id=5599674&scope=offline,messages&redirect_uri=localhost:8080/home&display=page&v=5.21&response_type=token">Get Token</a><br>--%>
     3. в открытом окне скопируйте ваш access_token из url</p>
+    <%--<c:if test="${token != null}">--%>
+    <%--3. Ваш access token = ${token}--%>
+    <%--</c:if>--%>
+</p>
+
+
 </div>
 </div>
 

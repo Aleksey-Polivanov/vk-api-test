@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
@@ -22,7 +23,7 @@ public class VkApi {
             "&v={API_VERSION}" +
             "&response_type=token";
 
-    private static final String API_REQUEST = "https://api.vk.com/method/{METHOD}?{PARAMS}&access_token={TOKEN}&v=5.21";
+    private static final String API_REQUEST = "https://api.vk.com/method/{METHOD}?{PARAMS}&access_token={TOKEN}&v=5.37";
 
     public VkApi with(String appId, String accessToken) throws IOException {
         return new VkApi(appId, accessToken);
@@ -43,7 +44,7 @@ public class VkApi {
     private static void auth(String appId) throws IOException {
         String reqUrl = AUTH_URL
                 .replace("{APP_ID}", appId)
-                .replace("{PERMISSIONS}", "messages")
+                .replace("{PERMISSIONS}", "4096")
                 .replace("{REDIRECT_URI}", "blank.html")
                 .replace("{DISPLAY}", "page")
                 .replace("{API_VERSION}", "5.21");
@@ -70,12 +71,12 @@ public class VkApi {
         String city = "city";
 
         return invokeApi("friends.get", Params.create()
-//                .add("count", String.valueOf(1))
+                .add("count", String.valueOf(5))
                 .add("fields", nickname));
 //
     }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public String searchUsers(String groupID) throws IOException {
+    public String searchUsers(String groupID, String offset) throws IOException {
 
         if(groupID.equals("it_climb")){
             groupID = "105592803";
@@ -88,6 +89,7 @@ public class VkApi {
         return invokeApi("users.search", Params.create()
                 .add("sort", String.valueOf(1))
                 .add("count", String.valueOf(1000))
+                .add("offset",offset)
                 .add("city", String.valueOf(280))
                 .add("country", String.valueOf(2))
                 .add("sex", String.valueOf(2))
@@ -100,34 +102,40 @@ public class VkApi {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public void sendMessages(String userID) throws IOException {
+    public String sendMessages(String userID, String userName) throws IOException {
 
-        String msg =" Привет.\n" +
-                    "\n" +
-                    "Я хочу немного украсть твоего времени и рассказать о курсе \"Как пролезть в IT как Junior Java Developer\". Собирается группа для написания тестового проекта, чтоб получить навыки и заполучить заветную вакансию.\n" +
-                    "\n" +
-                    "Если интересно вот группа:\n" +
-                    "\n" +
-                    "https://vk.com/java_get_first_job.\n" +
-                    "\n" +
-                    "Есть вопросы:\n" +
-                    "skype: id-evg\n" +
-                    "тел: 050 95 48 337\n" +
-                    "\n" +
-                    "На это сообщение не отвечаем) noreply)";
+        String msg =
 
-        String msg1 = "Шшшш шшш.. " + "\n" + "Ра..шшш..з! Раз!" + "\n" + "приём!! как меня видно?" + "\n" +
+                "Привет, "+userName+", <br>" +
+                "<br>" +
+                "Мне показалось ты интересуешься Java, поэтому решил украсть немного твоего времени и рассказать о курсе " +
+                "Как пролезть в IT как Junior Java Developer.На курсе помимо теоретических занятий мы будем разрабатывать " +
+                "живой проект, который ты сможешь добавить в свое резюме. Условия максимально приближены к рабочим " +
+                "(онлайн и офлайн митинги, распределение задач, командная работа). По желанию можем подтянуть твой " +
+                "английский, подготовить к собеседованию, помочь с резюме и трудоустройством. На прошлом потоке треть " +
+                "наших студентов устроилась на работу еще ДО окончания курса. <br>" +
+                "<br>" +
+                "Наша группа: https://vk.com/java_get_first_job. <br>" +
+                "<br>" +
+                "По всем вопросам обращайся сюда : <br>" +
+                "Евгений <br>" +
+                "skype: id-evg <br>" +
+                "тел: 050 95 48 337 <br>" +
+                "<br>" +
+                "Или оставь свой телефон, мы перезвоним! <br>" +
+                "Очень ждем тебя в нашу команду!";
+
+
+                String msg1 = "Шшшш шшш.. " + "\n" + "Ра..шшш..з! Раз!" + "\n" + "приём!! как меня видно?" + "\n" +
                 "Спите спокойно это просто Test API ;)"  + "\n" +  "Конец связи!!";
 
-        String msg2 = "One One!";
-
-            invokeApi("messages.send", Params.create()
-                .add("user_id", userID)
-                .add("message", msg2));
+        String msg4 = URLEncoder.encode(msg,"UTF-8");
+            return invokeApi("messages.send", Params.create()
+                    .add("user_id", userID)
+//                    .add("title", "IT-climb")
+                    .add("message", msg4));
     }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 
 
 
@@ -135,10 +143,13 @@ public class VkApi {
         final String parameters = (params == null) ? "" : params.build();
         String reqUrl = API_REQUEST
                 .replace("{METHOD}", method)
-                .replace("{TOKEN}", accessToken)
-                .replace("{PARAMS}&", parameters);
+                .replace("{PARAMS}&", parameters)
+                .replace("{TOKEN}", accessToken);
+
         final StringBuilder result = new StringBuilder();
+//        reqUrl = URLEncoder.encode(reqUrl,"UTF-8");
         final URL url = new URL(reqUrl);
+        System.out.println(url);
         try (InputStream is = url.openStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
           reader.lines().forEach(result::append);
@@ -148,6 +159,32 @@ public class VkApi {
         System.out.println(result.toString());
         return result.toString();
     }
+
+//    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//    private String EncoderInvokeApi(String method, Params params) throws IOException {
+//        final String parameters = (params == null) ? "" : params.build();
+//        String reqUrl = API_REQUEST
+//                .replace("{METHOD}", method)
+//                .replace("{PARAMS}&", parameters)
+//                .replace("{TOKEN}", accessToken);
+//
+//        final StringBuilder result = new StringBuilder();
+//        reqUrl = URLEncoder.encode(reqUrl,"UTF-8");
+//        final URL url = new URL(reqUrl);
+//        System.out.println(url);
+//        try (InputStream is = url.openStream()) {
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//            reader.lines().forEach(result::append);
+//        }
+//
+//
+//        System.out.println(result.toString());
+//        return result.toString();
+//    }
+
+//    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
     private static class Params {
 

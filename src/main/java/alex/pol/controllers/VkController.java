@@ -3,6 +3,7 @@ package alex.pol.controllers;
 import alex.pol.domain.UserVK;
 import alex.pol.domain.VkApi;
 import alex.pol.service.UserVKService;
+import org.apache.commons.httpclient.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,7 +32,7 @@ public class VkController {
 //
 //    @RequestMapping(value = "/getToken", method = RequestMethod.GET)
 //    public String getToken() throws IOException, URISyntaxException {
-//
+//        HttpClient hc =
 //        String reqUrl = "https://oauth.vk.com/authorize?" +
 //            "client_id=5599674" +
 //            "&scope=messages" +
@@ -63,6 +64,7 @@ public class VkController {
         System.out.println(str);
 
         String regex = "\\{([id]+\\W\\d+),(first_name\\W[A-zА-я0-9]+),(last_name\\W[A-zА-я0-9]+),(nickname\\W[.[^,]]*),(online\\W\\d)\\}";
+//        String regex = "\\{([id]+\\W\\d+),(first_name\\W[A-zА-я0-9]+),(last_name\\W[A-zА-я0-9]+)\\}";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(str.replace("\"", ""));
 
@@ -79,9 +81,9 @@ public class VkController {
 
 
     @RequestMapping(value = "/searchUsers", method = RequestMethod.POST)
-    public ModelAndView searchUsers(@RequestParam(required = true) String groupID) throws IOException, SQLException {
+    public ModelAndView searchUsers(@RequestParam(required = true) String groupID, @RequestParam(required = true) String offset ) throws IOException, SQLException {
 
-        String str = vkApi.searchUsers(groupID);
+        String str = vkApi.searchUsers(groupID, offset);
 
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println(str.replace("\"", ""));
@@ -107,43 +109,85 @@ public class VkController {
     public ModelAndView sendMessage() throws SQLException, IOException {
 
         List<UserVK> usersVK = userVKService.getAll();
+        int count = 0;
 
-        System.out.println(usersVK.toString());
-        for (UserVK userVK : usersVK) {
+            for (UserVK userVK : usersVK) {
+
             System.out.println(userVK.toString());
-            if(!(userVK.getSendMail())) {
 
-                vkApi.sendMessages(userVK.getVkID());
-                userVK.setSendMail(true);
-                System.out.println(userVK.getFirstName() + " " + userVK.getSecondName() + " сообщение отправленно");
+                if(!(userVK.getSendMail())) {
 
+                    String str = vkApi.sendMessages(userVK.getVkID(), userVK.getFirstName()).replace("\"", "");
+
+                    String regex = "\\{([error])+\\W\\{";
+                    Pattern p = Pattern.compile(regex);
+                    Matcher m = p.matcher(str);
+
+                    if(!(m.group(1).equals("error"))){
+                        userVK.setSendMail(true);
+                        System.out.println(userVK.getFirstName() + " " + userVK.getSecondName() + " сообщение отправленно");
+                        count++;
+                        if(count==20){break;}
+                    }
+                }
             }
-        }
 
         ModelAndView modelAndView = new ModelAndView("methods");
         return modelAndView;
-
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
+//    public void addNewUsers(Matcher m) throws SQLException {
+//
+//    while (m.find()) {
+//
+//        String vkID[] = m.group(1).split(":");
+//        String firstName[] = m.group(2).split(":");
+//        String lastName[] = m.group(3).split(":");
+//
+//        UserVK userVk = new UserVK(vkID[1], firstName[1], lastName[1]);
+//        System.out.println(userVk.toString());
+//        userVKService.insert(userVk);
+//
+//    }
+
     public void addNewUsers(Matcher m) throws SQLException {
 
-    while (m.find()) {
+        while (m.find()) {
 
-        String vkID[] = m.group(1).split(":");
-        String firstName[] = m.group(2).split(":");
-        String lastName[] = m.group(3).split(":");
+            String vkID[] = m.group(1).split(":");
+            String firstName[] = m.group(2).split(":");
+            String lastName[] = m.group(3).split(":");
 
-        UserVK userVk = new UserVK(vkID[1], firstName[1], lastName[1]);
-        System.out.println(userVk.toString());
-        userVKService.insert(userVk);
+            List<UserVK> usersVK = userVKService.getAll();
 
-    }
+            if (usersVK.size() == 0){
+                UserVK userVk = new UserVK(vkID[1], firstName[1], lastName[1]);
+                System.out.println(userVk.toString());
+                userVKService.insert(userVk);
+            } else{
+
+                int count = 0;
+                for (UserVK userVK : usersVK) {
+                    if(userVK.getVkID().equals(vkID[1])){
+                        count++;
+                        break;
+                    }
+                }
+                if(count==0){
+                    UserVK userVk = new UserVK(vkID[1], firstName[1], lastName[1]);
+                    System.out.println(userVk.toString());
+                    userVKService.insert(userVk);
+                }
+            }
 
 
+
+
+        }
 
 
 
