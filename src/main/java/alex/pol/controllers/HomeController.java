@@ -20,6 +20,34 @@ public class HomeController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public ModelAndView test() {
+
+        ModelAndView modelAndView = new ModelAndView("test");
+        modelAndView.addObject("imageCount", 8 );
+//  if(access_token != null){
+//            System.out.println(access_token);
+//            modelAndView.addObject("token",access_token);
+//        }
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/gallery", method = RequestMethod.GET)
+    public ModelAndView gallery() {
+
+
+        ModelAndView modelAndView = new ModelAndView("Gallery");
+        modelAndView.addObject("imageCount", 8 );
+
+//  if(access_token != null){
+//            System.out.println(access_token);
+//            modelAndView.addObject("token",access_token);
+//        }
+        return modelAndView;
+    }
+
+
+
 }
 
 

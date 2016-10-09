@@ -56,6 +56,7 @@ public class VkController {
         return modelAndView;
     }
 
+
     @RequestMapping(value = "/getMyFriends", method = RequestMethod.POST)
     public ModelAndView getMyFriend() throws IOException, SQLException {
 
@@ -84,7 +85,6 @@ public class VkController {
     public ModelAndView searchUsers(@RequestParam(required = true) String groupID, @RequestParam(required = true) String offset ) throws IOException, SQLException {
 
         String str = vkApi.searchUsers(groupID, offset);
-
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         System.out.println(str.replace("\"", ""));
         System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -106,7 +106,7 @@ public class VkController {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
-    public ModelAndView sendMessage() throws SQLException, IOException {
+    public String sendMessage() throws SQLException, IOException {
 
         List<UserVK> usersVK = userVKService.getAll();
         int count = 0;
@@ -119,18 +119,24 @@ public class VkController {
 
                     String str = vkApi.sendMessages(userVK.getVkID(), userVK.getFirstName()).replace("\"", "");
 
-                    String regex = "\\{([error])+\\W\\{";
-                    Pattern p = Pattern.compile(regex);
-                    Matcher m = p.matcher(str);
-
-                    if(!(m.group(1).equals("error"))){
                         userVK.setSendMail(true);
+                    userVKService.update(userVK);
                         System.out.println(userVK.getFirstName() + " " + userVK.getSecondName() + " сообщение отправленно");
-                        count++;
+                    System.out.println(userVK.getSendMail());
+                    count++;
                         if(count==20){break;}
-                    }
+
                 }
             }
+
+
+        System.out.println(count);
+        return "redirect:/home";
+    }
+
+
+    @RequestMapping(value = "/back", method = RequestMethod.POST)
+    public ModelAndView back() throws IOException {
 
         ModelAndView modelAndView = new ModelAndView("methods");
         return modelAndView;
@@ -155,6 +161,8 @@ public class VkController {
 //    }
 
     public void addNewUsers(Matcher m) throws SQLException {
+
+        int countadd = 0;
 
         while (m.find()) {
 
@@ -181,6 +189,7 @@ public class VkController {
                     UserVK userVk = new UserVK(vkID[1], firstName[1], lastName[1]);
                     System.out.println(userVk.toString());
                     userVKService.insert(userVk);
+                countadd++;
                 }
             }
 
@@ -189,7 +198,7 @@ public class VkController {
 
         }
 
-
+        System.out.println("Было добавленно " + countadd + " юзеров!");
 
 }
 
