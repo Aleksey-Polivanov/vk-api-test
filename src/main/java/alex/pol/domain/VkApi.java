@@ -94,8 +94,8 @@ public class VkApi {
                 .add("sort", String.valueOf(1))
                 .add("count", String.valueOf(1000))
                 .add("offset",offset)
-//                .add("city", String.valueOf(280))
-//                .add("country", String.valueOf(2))
+                .add("city", String.valueOf(280))
+                .add("country", String.valueOf(2))
 //                .add("sex", String.valueOf(2))
                 .add("age_from", String.valueOf(22))
                 .add("age_to", String.valueOf(36))
@@ -149,12 +149,36 @@ public class VkApi {
 
 
                 String msg1 = "Шшшш шшш.. " + "\n" + "Ра..шшш..з! Раз!" + "\n" + "приём!! как меня видно?" + "\n" +
-                "Спите спокойно это просто Test API ;)"  + "\n" +  "Конец связи!!";
+                        "Спите спокойно это просто Test API ;)"  + "\n" +  "Конец связи!!";
 
+                String msg5 =
+                "Привет, "+userName+", <br>" +
+                        "<br>" +
+                        "Мне показалось ты интересуешься JavaScript разработкой, поэтому решил рассказать" +
+                        " о наборе курса IT Climb React.js+Node.js. <br>" +
+                        "<br>" +
+                        "Мы - единственные курсы в Харькове, где помимо теоретических занятий, ты " +
+                        "с командой разработаешь проект для реального заказчика, который сможешь " +
+                        "добавить в свое резюме. Условия максимально приближены к рабочим (митинги, " +
+                        "распределение задач, командная работа).<br>"+
+                        "<br>" +
+                        "По желанию можем подтянуть Твой английский, подготовить к собеседованию, помочь с резюме " +
+                        "и трудоустройством. На прошлом потоке треть наших студентов устроилась на работу еще ДО " +
+                        "окончания курса.<br>"+
+                        "<br>" +
+                        "Наша группа: https://vk.com/itclimb <br>"+
+                        "<br>" +
+                        "Остались сомнения?" +
+                        " Запишись на"+
+                        " бесплатное" +
+                        " пробное занятие которое пройдёт" +
+                        " 25 февраля в 11:00. <br>" +
+                        "<br>" +
+                        "https://goo.gl/forms/CsPnhkHy3JmK4YkA2 <br>"+
+                        "<br>" +
+                        "Очень ждем Тебя в нашу команду!";
 
-
-
-        String msg4 = URLEncoder.encode(msg,"UTF-8");
+                String msg4 = URLEncoder.encode(msg5,"UTF-8");
             return invokeApi("messages.send", Params.create()
                     .add("user_id", userID)
 //                    .add("title", "IT-climb")

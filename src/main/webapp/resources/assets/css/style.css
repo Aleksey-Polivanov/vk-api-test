@@ -11,7 +11,7 @@ http://www.tooplate.com/view/2077-modern-town
 body {
 		background: #ffffff;
     font-family: 'Open Sans', sans-serif;
-    font-weight: 400;
+    /*font-weight: 400;*/
     position: relative;
 }
 
@@ -22,7 +22,7 @@ html,body {
 
 .RegForm{
     width: 500px;
-    height: 250px;
+    height: 260px;
     background-color: #d4ebfe;
     margin: 200px 30%;
     border-radius: 30px;
