@@ -11,6 +11,37 @@
     <title>Title</title>
 </head>
 <body>
+
+
+    <form:form role="form" action="/sendEmail" method="post">
+
+        <input  type="text" name="day" placeholder="Введите день"/>
+        <button type="submit" class="btn btn-primary logIn">Send Email</button>
+
+    </form:form>
+
+    <form:form role="form" action="/sendEmailWithAttachment" method="post">
+
+        <input  type="text" name="day" placeholder="Введите день"/>
+        <button type="submit" class="btn btn-primary logIn">SEWA</button>
+
+    </form:form>
+
+    <form:form role="form" action="/readFile" method="post">
+
+        <input  type="text" name="sheet" placeholder="Введите название страницы"/>
+        <button type="submit" class="btn btn-primary logIn">Read File</button>
+
+    </form:form>
+
+
+
+
+
+
+
+
+
 <div class="RegForm">
 <form:form role="form" action="/authorization" method="post">
 <div class="form">

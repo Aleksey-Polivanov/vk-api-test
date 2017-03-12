@@ -106,7 +106,7 @@ public class VkController {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @RequestMapping(value = "/sendMessage", method = RequestMethod.POST)
-    public String sendMessage() throws SQLException, IOException {
+    public String sendMessage() throws SQLException, IOException, InterruptedException {
 
         List<UserVK> usersVK = userVKService.getAll();
         int count = 0;
@@ -116,7 +116,7 @@ public class VkController {
             System.out.println(userVK.toString());
 
                 if(!(userVK.getSendMail())) {
-
+                    Thread.sleep(1000);
                     String str = vkApi.sendMessages(userVK.getVkID(), userVK.getFirstName()).replace("\"", "");
 
                         userVK.setSendMail(true);
